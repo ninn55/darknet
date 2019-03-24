@@ -69,12 +69,20 @@ image mat_to_image(Mat m)
 void *open_video_stream(const char *f, int c, int w, int h, int fps)
 {
     VideoCapture *cap;
+#ifndef USE_CSI_CAM  
     if(f) cap = new VideoCapture(f);
     else cap = new VideoCapture(c);
     if(!cap->isOpened()) return 0;
     if(w) cap->set(CV_CAP_PROP_FRAME_WIDTH, w);
     if(h) cap->set(CV_CAP_PROP_FRAME_HEIGHT, w);
     if(fps) cap->set(CV_CAP_PROP_FPS, w);
+#else
+    cap = new VideoCapture("nvcamerasrc ! video/x-raw(memory:NVMM), width=(int)640, \
+              height=(int)360, format=(string)I420, framerate=(fraction)24/1 ! \
+              nvvidconv flip-method=0 ! video/x-raw, format=(string)I420 ! \
+              videoconvert ! video/x-raw, format=(string)BGR ! \
+              appsink");
+#endif
     return (void *) cap;
 }
 

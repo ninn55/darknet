@@ -17,6 +17,8 @@
     #endif
 #endif
 
+#define USE_CSI_CAM 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
